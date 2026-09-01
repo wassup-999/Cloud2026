@@ -776,11 +776,11 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 1
   windowsGamepadBackendHint: 0
-  cloudProjectId:
+  cloudProjectId: af9e5248-69a6-47b3-b1d9-513cd5aa380a
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName:
-  organizationId:
+  projectName: Cloud2026
+  organizationId: sebasquispeperez
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}
