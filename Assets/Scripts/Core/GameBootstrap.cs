@@ -1,6 +1,7 @@
-using System;
-using UnityEngine;
 using Cloud2026.Services;
+using System;
+using Unity.Services.RemoteConfig;
+using UnityEngine;
 
 namespace Cloud2026.Core
 {
@@ -24,6 +25,9 @@ namespace Cloud2026.Core
 
         [Tooltip("Wrapper de Cloud Save: guarda y carga el perfil del jugador. Necesita sesión iniciada.")]
         [SerializeField] private UGSCloudSaveService cloudSaveService;
+
+        [Tooltip("Wrapper de Remote Config: obtiene parámetros de configuración remota. Necesita sesión iniciada.")]
+        [SerializeField] private UGSRemoteConfigService remoteConfigService;
 
         [Header("Configuración de Arranque")]
         [Tooltip("Si es true, no destruye este GameObject al cargar nuevas escenas.")]
@@ -71,6 +75,11 @@ namespace Cloud2026.Core
                 {
                     await authService.SignInAnonymouslyAsync();
                 }
+
+                if (remoteConfigService != null && authService.IsSignedIn)
+                {
+                    await remoteConfigService.InitializeAndDownload();
+                }
             }
         }
 
@@ -80,6 +89,7 @@ namespace Cloud2026.Core
             cloudCodeService = EnsureComponent(cloudCodeService);
             turnMatchService = EnsureComponent(turnMatchService);
             cloudSaveService = EnsureComponent(cloudSaveService);
+            remoteConfigService = EnsureComponent(remoteConfigService);
         }
 
         /// <summary>
