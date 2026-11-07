@@ -103,7 +103,7 @@ namespace Cloud2026.Core
         /// <summary>
         /// Devuelve el servicio ya asignado en el inspector; si falta, lo busca entre
         /// los hijos y, como último recurso, lo añade a este mismo GameObject.
-        /// </summary>
+        /// </summary>v
         private T EnsureComponent<T>(T current) where T : Component
         {
             if (current != null)

@@ -29,13 +29,13 @@ namespace Cloud2026.Services
             // 1. Leer el catálogo que ya se descargó en el paso anterior
             var config = RemoteConfigService.Instance.appConfig;
             CatalogoEconomia catalogo = null;
-            if (config.HasKey("catalog_economy"))
+            if (config.HasKey("catalogo_economia"))
             {
-                catalogo = JsonUtility.FromJson<CatalogoEconomia>(config.GetJson("catalog_economy", "{}"));
+                catalogo = JsonUtility.FromJson<CatalogoEconomia>(config.GetJson("catalogo_economia", "{}"));
             }
 
             // 2. Pedir saldos e inventario a la nube (Paso 5 y 6)
-            var llaves = new HashSet<string> { "salary", "inventory" };
+            var llaves = new HashSet<string> { "saldos", "inventario" };
             var datos = await CloudSaveService.Instance.Data.Player.LoadAsync(llaves);
 
             // Guardar los write locks para la compra segura del Paso 7
@@ -46,7 +46,7 @@ namespace Cloud2026.Services
             }
 
             // 3. Procesar Saldos
-            if (datos.TryGetValue("salary", out var itemSaldos))
+            if (datos.TryGetValue("saldos", out var itemSaldos))
             {
                 Saldos = itemSaldos.Value.GetAs<SaldosJugador>();
                 Debug.Log($"[Economia] Saldos cargados desde la nube.");
@@ -64,15 +64,15 @@ namespace Cloud2026.Services
                 }
 
                 // Guardar el nuevo saldo en la nube
-                await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> { { "salary", Saldos } });
+                await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> { { "saldos", Saldos } });
                 Debug.Log("[Economia] Jugador nuevo: saldo inicial creado desde el catálogo y guardado en la nube.");
             }
 
             // 4. Procesar Inventario
-            if (datos.TryGetValue("inventory", out var itemInv))
+            if (datos.TryGetValue("inventario", out var itemInv))
             {
                 Inventario = itemInv.Value.GetAs<InventarioJugador>();
-                Debug.Log($"[Economia] Inventario cargado. objetos: {Inventario.objetos.Count}, heroes: {Inventario.heroes.Count}");
+                Debug.Log($"[Economia] Inventario cargado. Objetos: {Inventario.objetos.Count}, Héroes: {Inventario.heroes.Count}");
             }
             else
             {
@@ -84,10 +84,10 @@ namespace Cloud2026.Services
         {
             // 1. Leer el catálogo de Remote Config para buscar la regla de la compra
             var config = RemoteConfigService.Instance.appConfig;
-            if (!config.HasKey("catalog_economy")) return false;
+            if (!config.HasKey("catalogo_economia")) return false;
 
             // Parseo rápido para encontrar la compra
-            var catalogo = JsonUtility.FromJson<CatalogoEconomiaParaCompra>(config.GetJson("catalog_economy", "{}"));
+            var catalogo = JsonUtility.FromJson<CatalogoEconomiaParaCompra>(config.GetJson("catalogo_economia", "{}"));
             CompraCatalogo compra = null;
             if (catalogo != null && catalogo.compras != null)
             {
@@ -120,8 +120,8 @@ namespace Cloud2026.Services
             // 4. Guardar en Cloud Save usando UNA SOLA llamada con ambos cerrojos (Write Locks) (Paso 7)
             var datosGuardar = new Dictionary<string, SaveItem>
             {
-                { "salary", new SaveItem(Saldos, Cerrojos.ContainsKey("salary") ? Cerrojos["salary"] : null) },
-                { "inventory", new SaveItem(Inventario, Cerrojos.ContainsKey("inventory") ? Cerrojos["inventory"] : null) }
+                { "saldos", new SaveItem(Saldos, Cerrojos.ContainsKey("saldos") ? Cerrojos["saldos"] : null) },
+                { "inventario", new SaveItem(Inventario, Cerrojos.ContainsKey("inventario") ? Cerrojos["inventario"] : null) }
             };
 
             try
@@ -130,7 +130,7 @@ namespace Cloud2026.Services
                 Debug.Log($"[Economia] ¡COMPRA EXITOSA! Compraste {compra.entregaItem} por {compra.cuestaCantidad} de {compra.cuestaMoneda}.");
 
                 // Actualizar cerrojos tras el guardado exitoso
-                var llaves = new HashSet<string> { "salary", "inventory" };
+                var llaves = new HashSet<string> { "saldos", "inventario" };
                 var nuevosDatos = await CloudSaveService.Instance.Data.Player.LoadAsync(llaves);
                 foreach (var par in nuevosDatos) Cerrojos[par.Key] = par.Value.WriteLock;
 
