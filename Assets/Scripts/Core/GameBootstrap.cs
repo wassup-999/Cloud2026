@@ -28,6 +28,8 @@ namespace Cloud2026.Core
 
         [Tooltip("Wrapper de Remote Config: obtiene parámetros de configuración remota. Necesita sesión iniciada.")]
         [SerializeField] private UGSRemoteConfigService remoteConfigService;
+    
+        [SerializeField] private UGSEconomiaService economiaService;
 
         [Header("Configuración de Arranque")]
         [Tooltip("Si es true, no destruye este GameObject al cargar nuevas escenas.")]
@@ -80,6 +82,11 @@ namespace Cloud2026.Core
                 {
                     await remoteConfigService.InitializeAndDownload();
                 }
+
+                if (economiaService != null && authService.IsSignedIn)
+                {
+                    await economiaService.CargarEconomia();
+                }
             }
         }
 
@@ -90,6 +97,7 @@ namespace Cloud2026.Core
             turnMatchService = EnsureComponent(turnMatchService);
             cloudSaveService = EnsureComponent(cloudSaveService);
             remoteConfigService = EnsureComponent(remoteConfigService);
+            economiaService = EnsureComponent(economiaService);
         }
 
         /// <summary>
