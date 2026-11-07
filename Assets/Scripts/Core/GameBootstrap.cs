@@ -4,10 +4,6 @@ using Cloud2026.Services;
 
 namespace Cloud2026.Core
 {
-    /// <summary>
-    /// Punto de entrada del juego. Gestiona el ciclo de vida de los servicios UGS
-    /// y la persistencia de la sesión entre escenas.
-    /// </summary>
     [DefaultExecutionOrder(-100)]
     public class GameBootstrap : MonoBehaviour
     {
@@ -28,7 +24,7 @@ namespace Cloud2026.Core
         [Header("Configuración de Arranque")]
         [Tooltip("Si es true, no destruye este GameObject al cargar nuevas escenas.")]
         [SerializeField] private bool persistAcrossScenes = true;
-        //[SerializeField] private UGSEconomiaService economiaService;
+        [SerializeField] private UGSEconomiaService economiaService;
         [SerializeField] private UGSRemoteConfigService remoteConfigService;
 
         [Tooltip("Si es true, intenta realizar login anónimo automático tras inicializar.")]
@@ -79,11 +75,11 @@ namespace Cloud2026.Core
                     await remoteConfigService.InicializarYDescargar();
                 }
 
-                /*
+                
                 if (economiaService != null)
                 {
                     await economiaService.CargarEconomia();
-                }*/
+                }
             }
         }
 
